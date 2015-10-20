@@ -1,5 +1,6 @@
 package it.jaschke.alexandria;
 
+import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,15 +13,21 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
+
 import it.jaschke.alexandria.api.Callback;
+import it.jaschke.alexandria.barcodeReader.BarcodeCaptureActivity;
+import it.jaschke.alexandria.services.BookService;
 
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -30,12 +37,35 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
+
+
+
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        void onbookFound(Barcode bar);
+    }
+
+
+
+
+    private static final String TAG = "BarcodeMain";
+
     private CharSequence title;
     public static boolean IS_TABLET = false;
     private BroadcastReceiver messageReciever;
 
     public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
     public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
+
+  //  public static final int RC_BARCODE_CAPTURE = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +87,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         // Set up the drawer.
         navigationDrawerFragment.setUp(R.id.navigation_drawer,
-                    (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
@@ -179,4 +209,63 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
 
+
+
+    /**
+     * Called when an activity you launched exits, giving you the requestCode
+     * you started it with, the resultCode it returned, and any additional
+     * data from it.  The <var>resultCode</var> will be
+     * {@link #RESULT_CANCELED} if the activity explicitly returned that,
+     * didn't return any result, or crashed during its operation.
+     * <p/>
+     * <p>You will receive this call immediately before onResume() when your
+     * activity is re-starting.
+     * <p/>
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     *                    (various data can be attached to Intent "extras").
+     * @see #startActivityForResult
+     * @see #createPendingResult
+     * @see #setResult(int)
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AddBook.RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+
+                    ((Callbacks) this).onbookFound(barcode);
+
+
+                } else {
+                   // statusMessage.setText(R.string.barcode_failure);
+                    Log.d(TAG, "No barcode captured, intent data is null");
+                }
+            } else {
+               /* statusMessage.setText(String.format(getString(R.string.barcode_error),
+                        CommonStatusCodes.getStatusCodeString(resultCode)));*/
+                Log.d(TAG, String.format(getString(R.string.barcode_error),
+                        CommonStatusCodes.getStatusCodeString(resultCode)));
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
+
 }
+
+
+
+
+
+
+

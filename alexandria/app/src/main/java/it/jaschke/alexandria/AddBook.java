@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,23 +20,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.barcode.Barcode;
+
+import it.jaschke.alexandria.barcodeReader.BarcodeCaptureActivity;
 
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
 
-public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MainActivity.Callbacks {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
-    private final int LOADER_ID = 1;
+    public static final int LOADER_ID = 1;
     private View rootView;
+
     private final String EAN_CONTENT="eanContent";
     private static final String SCAN_FORMAT = "scanFormat";
     private static final String SCAN_CONTENTS = "scanContents";
 
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
+
+    public static final int RC_BARCODE_CAPTURE = 9001;
+
 
 
 
@@ -96,12 +104,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
-                Context context = getActivity();
+
+               Context context = getActivity();
                 CharSequence text = "This button should let you scan a book for its barcode!";
                 int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
+
+                // launch barcode activity using google sample api.
+                Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+                getActivity().startActivityForResult(intent, RC_BARCODE_CAPTURE);
+
 
             }
         });
@@ -132,8 +146,22 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         return rootView;
     }
 
-    private void restartLoader(){
+    public void restartLoader(){
         getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+
+
+
+    @Override
+    public void onbookFound(Barcode barcode){
+        //Once we have an ISBN, start a book intent
+        Intent bookIntent = new Intent(getActivity(), BookService.class);
+        bookIntent.putExtra(BookService.EAN, barcode.rawValue);
+        Log.d(TAG, barcode.rawValue);
+        bookIntent.setAction(BookService.FETCH_BOOK);
+        getActivity().startService(bookIntent);
+        AddBook.this.restartLoader();
     }
 
     @Override
@@ -204,4 +232,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
     }
+
+
+
 }
