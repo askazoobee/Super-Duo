@@ -106,7 +106,7 @@ public class BookService extends IntentService {
                     .build();
 
             URL url = new URL(builtUri.toString());
-
+            Log.e(LOG_TAG, "url built" + url);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();

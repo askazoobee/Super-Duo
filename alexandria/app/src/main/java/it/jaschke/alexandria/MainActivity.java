@@ -39,21 +39,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      */
 
 
-
-
-    /**
+/*
+    */
+/**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
      * selections.
-     */
+     *//*
+
     public interface Callbacks {
-        /**
+        */
+/**
          * Callback for when an item has been selected.
-         */
+         *//*
+
         void onbookFound(Barcode bar);
     }
-
-
+*/
 
 
     private static final String TAG = "BarcodeMain";
@@ -239,10 +241,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    //Once we have an ISBN, start a book intent
+                    Intent bookIntent = new Intent(this, BookService.class);
+                    bookIntent.putExtra(BookService.EAN, barcode.rawValue);
+                    Log.d(TAG, "barcode value" + barcode.rawValue);
+                    bookIntent.setAction(BookService.FETCH_BOOK);
+                    this.startService(bookIntent);
+                    Log.d(TAG, "barcode captured,added to library");
 
-                    ((Callbacks) this).onbookFound(barcode);
+                    Context context = this;
+                    CharSequence text = "Book found and added to the library!";
+                    int duration = Toast.LENGTH_LONG;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
 
 
+                   // ((Callbacks) this).onbookFound(barcode);
                 } else {
                    // statusMessage.setText(R.string.barcode_failure);
                     Log.d(TAG, "No barcode captured, intent data is null");

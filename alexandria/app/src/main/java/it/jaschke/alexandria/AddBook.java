@@ -29,7 +29,7 @@ import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
 
-public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MainActivity.Callbacks {
+public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
     public static final int LOADER_ID = 1;
@@ -86,12 +86,24 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     clearFields();
                     return;
                 }
-                //Once we have an ISBN, start a book intent
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean);
-                bookIntent.setAction(BookService.FETCH_BOOK);
-                getActivity().startService(bookIntent);
-                AddBook.this.restartLoader();
+
+                //check if there is network before starting book service
+                if(!Utilities.isNetworkAvailable(getActivity())){
+                    Context context = getActivity();
+                    CharSequence text = "No network. Please connect first, to search book";
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
+                }else {
+                    //Once we have an ISBN, start a book intent
+                    Intent bookIntent = new Intent(getActivity(), BookService.class);
+                    bookIntent.putExtra(BookService.EAN, ean);
+                    bookIntent.setAction(BookService.FETCH_BOOK);
+                    getActivity().startService(bookIntent);
+                    AddBook.this.restartLoader();
+                }
             }
         });
 
@@ -104,18 +116,22 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
+                //check if there is network before starting book service
 
-               Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
+                if(!Utilities.isNetworkAvailable(getActivity())){
+                    Context context = getActivity();
+                    CharSequence text = "No network. Please connect first, to scan bar code";
+                    int duration = Toast.LENGTH_LONG;
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
 
-                // launch barcode activity using google sample api.
-                Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
-                getActivity().startActivityForResult(intent, RC_BARCODE_CAPTURE);
+                }else {
+                    // launch barcode activity using google sample api.
+                    Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+                    getActivity().startActivityForResult(intent, RC_BARCODE_CAPTURE);
 
+                }
 
             }
         });
@@ -152,7 +168,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
 
 
-
+/*
     @Override
     public void onbookFound(Barcode barcode){
         //Once we have an ISBN, start a book intent
@@ -162,7 +178,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         bookIntent.setAction(BookService.FETCH_BOOK);
         getActivity().startService(bookIntent);
         AddBook.this.restartLoader();
-    }
+    }*/
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
