@@ -13,8 +13,9 @@ import android.widget.TextView;
 /**
  * Created by yehya khaled on 2/26/2015.
  */
-public class scoresAdapter extends CursorAdapter
-{
+public class scoresAdapter extends CursorAdapter {
+
+    final private Context mContext;
     public static final int COL_HOME = 3;
     public static final int COL_AWAY = 4;
     public static final int COL_HOME_GOALS = 6;
@@ -29,6 +30,7 @@ public class scoresAdapter extends CursorAdapter
     public scoresAdapter(Context context,Cursor cursor,int flags)
     {
         super(context,cursor,flags);
+        mContext = context;
     }
 
     @Override
@@ -45,16 +47,36 @@ public class scoresAdapter extends CursorAdapter
     public void bindView(View view, final Context context, Cursor cursor)
     {
         final ViewHolder mHolder = (ViewHolder) view.getTag();
+
         mHolder.home_name.setText(cursor.getString(COL_HOME));
+        //add content description for A1y..
+        mHolder.home_name.setContentDescription(mContext.getString(R.string.a11y_home_name, cursor.getString(COL_HOME)));
+
         mHolder.away_name.setText(cursor.getString(COL_AWAY));
+        //add content description for A1y..
+        mHolder.away_name.setContentDescription(mContext.getString(R.string.a11y_away_name, cursor.getString(COL_AWAY)));
+
         mHolder.date.setText(cursor.getString(COL_MATCHTIME));
-        mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS),cursor.getInt(COL_AWAY_GOALS)));
+        //add content description for A1y..
+        mHolder.date.setContentDescription(mContext.getString(R.string.a11y_match_time, cursor.getString(COL_MATCHTIME)));
+
+        mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
+        //add content description for A1y..
+        mHolder.score.setContentDescription(mContext.getString(R.string.a11y_score_home, cursor.getString(COL_HOME_GOALS)));
+        mHolder.score.setContentDescription(mContext.getString(R.string.a11y_score_away, cursor.getString(COL_AWAY_GOALS)));
+
         mHolder.match_id = cursor.getDouble(COL_ID);
+
         mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                 cursor.getString(COL_HOME)));
+        //add content description for A1y..
+        mHolder.home_crest.setContentDescription(mContext.getString(R.string.a11y_home_crest, cursor.getString(COL_HOME)));
+
         mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
-                cursor.getString(COL_AWAY)
-        ));
+                cursor.getString(COL_AWAY)));
+        //add content description for A1y..
+        mHolder.away_crest.setContentDescription(mContext.getString(R.string.a11y_away_crest, cursor.getString(COL_AWAY)));
+
         //Log.v(FetchScoreTask.LOG_TAG,mHolder.home_name.getText() + " Vs. " + mHolder.away_name.getText() +" id " + String.valueOf(mHolder.match_id));
         //Log.v(FetchScoreTask.LOG_TAG,String.valueOf(detail_match_id));
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
@@ -70,8 +92,19 @@ public class scoresAdapter extends CursorAdapter
             TextView match_day = (TextView) v.findViewById(R.id.matchday_textview);
             match_day.setText(Utilies.getMatchDay(cursor.getInt(COL_MATCHDAY),
                     cursor.getInt(COL_LEAGUE)));
+            //add content description for A1y..
+            match_day.setContentDescription(mContext.getString(R.string.a11y_match_day, cursor.getString(COL_MATCHDAY)));
+            match_day.setContentDescription(mContext.getString(R.string.a11y_league, cursor.getString(COL_LEAGUE)));
+
+
+
             TextView league = (TextView) v.findViewById(R.id.league_textview);
             league.setText(Utilies.getLeague(cursor.getInt(COL_LEAGUE)));
+            //add content description for A1y..
+            mHolder.away_crest.setContentDescription(mContext.getString(R.string.a11y_league, cursor.getString(COL_LEAGUE)));
+
+
+
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setOnClickListener(new View.OnClickListener() {
                 @Override

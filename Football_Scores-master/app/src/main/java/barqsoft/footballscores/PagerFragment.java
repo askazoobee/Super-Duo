@@ -74,12 +74,18 @@ public class PagerFragment extends Fragment
             int julianDay = Time.getJulianDay(dateInMillis, t.gmtoff);
             int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
             if (julianDay == currentJulianDay) {
+                //add content description for A1y..
+                mPagerHandler.setContentDescription("Today");
                 return context.getString(R.string.today);
             } else if ( julianDay == currentJulianDay +1 ) {
+                //add content description for A1y..
+                mPagerHandler.setContentDescription("Tomorrow");
                 return context.getString(R.string.tomorrow);
             }
              else if ( julianDay == currentJulianDay -1)
             {
+                //add content description for A1y..
+                mPagerHandler.setContentDescription("Yesterday");
                 return context.getString(R.string.yesterday);
             }
             else
@@ -88,6 +94,8 @@ public class PagerFragment extends Fragment
                 time.setToNow();
                 // Otherwise, the format is just the day of the week (e.g "Wednesday".
                 SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+                //add content description for A1y..
+                mPagerHandler.setContentDescription(dayFormat.format(dateInMillis));
                 return dayFormat.format(dateInMillis);
             }
         }
