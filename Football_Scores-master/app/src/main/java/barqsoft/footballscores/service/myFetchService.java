@@ -30,10 +30,13 @@ import barqsoft.footballscores.R;
  */
 public class myFetchService extends IntentService
 {
+    public static final String ACTION_DATA_UPDATED =
+            "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
     public static final String LOG_TAG = "myFetchService";
     public myFetchService()
     {
         super("myFetchService");
+
     }
 
     @Override
@@ -266,6 +269,11 @@ public class myFetchService extends IntentService
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
             //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+
+            //call the widget service to update its data.
+            updateWidgets();
+
+
         }
         catch (JSONException e)
         {
@@ -273,5 +281,17 @@ public class myFetchService extends IntentService
         }
 
     }
+
+    private void updateWidgets() {
+        Context context = getApplicationContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+       }
+
+
+
+
 }
 
