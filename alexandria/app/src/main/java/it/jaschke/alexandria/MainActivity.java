@@ -38,7 +38,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
 
-
 /*
     */
 /**
@@ -56,7 +55,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         void onbookFound(Barcode bar);
     }
 */
-
 
     private static final String TAG = "BarcodeMain";
 
@@ -249,12 +247,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     this.startService(bookIntent);
                     Log.d(TAG, "barcode captured,added to library");
 
-                    Context context = this;
+                  /*  Context context = this;
                     CharSequence text = "Book found and added to the library!";
                     int duration = Toast.LENGTH_LONG;
                     Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-
+                    toast.show();*/
 
                    // ((Callbacks) this).onbookFound(barcode);
                 } else {

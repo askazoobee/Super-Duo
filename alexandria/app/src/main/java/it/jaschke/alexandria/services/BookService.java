@@ -106,7 +106,7 @@ public class BookService extends IntentService {
                     .build();
 
             URL url = new URL(builtUri.toString());
-            Log.e(LOG_TAG, "url built" + url);
+            Log.e(LOG_TAG, "url built " + url);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -161,6 +161,7 @@ public class BookService extends IntentService {
             JSONArray bookArray;
             if(bookJson.has(ITEMS)){
                 bookArray = bookJson.getJSONArray(ITEMS);
+
             }else{
                 Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
                 messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
@@ -189,6 +190,9 @@ public class BookService extends IntentService {
 
     writeBackBook(ean, title, subtitle, desc, imgUrl);
 
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.found));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
 
     if (bookInfo.has(AUTHORS)) {
         writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));

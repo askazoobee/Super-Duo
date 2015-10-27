@@ -61,6 +61,9 @@ public class ListOfBooks extends Fragment implements LoaderManager.LoaderCallbac
                 }
         );
 
+        //restart loader to clear all books first.
+        ListOfBooks.this.restartLoader();
+
         bookList = (ListView) rootView.findViewById(R.id.listOfBooks);
         bookList.setAdapter(bookListAdapter);
 
