@@ -210,11 +210,16 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
+        //ADD CHECK IF NO AUTHORS IN DATABASE and set the text to a generic "unknown"
+        try {
+            String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        }catch (NullPointerException e){
+            ((TextView) rootView.findViewById(R.id.authors)).setText(getActivity().getString(R.string.NA));
+        }
 
-        String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
             new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);

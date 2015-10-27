@@ -172,29 +172,30 @@ public class BookService extends IntentService {
 
             String title = bookInfo.getString(TITLE);
 
-            String subtitle = "";
-            if(bookInfo.has(SUBTITLE)) {
-                subtitle = bookInfo.getString(SUBTITLE);
-            }
+    String subtitle = "";
+    if (bookInfo.has(SUBTITLE)) {
+        subtitle = bookInfo.getString(SUBTITLE);
+    }
 
-            String desc="";
-            if(bookInfo.has(DESC)){
-                desc = bookInfo.getString(DESC);
-            }
+    String desc = "";
+    if (bookInfo.has(DESC)) {
+        desc = bookInfo.getString(DESC);
+    }
 
-            String imgUrl = "";
-            if(bookInfo.has(IMG_URL_PATH) && bookInfo.getJSONObject(IMG_URL_PATH).has(IMG_URL)) {
-                imgUrl = bookInfo.getJSONObject(IMG_URL_PATH).getString(IMG_URL);
-            }
+    String imgUrl = "";
+    if (bookInfo.has(IMG_URL_PATH) && bookInfo.getJSONObject(IMG_URL_PATH).has(IMG_URL)) {
+        imgUrl = bookInfo.getJSONObject(IMG_URL_PATH).getString(IMG_URL);
+    }
 
-            writeBackBook(ean, title, subtitle, desc, imgUrl);
+    writeBackBook(ean, title, subtitle, desc, imgUrl);
 
-            if(bookInfo.has(AUTHORS)) {
-                writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));
-            }
-            if(bookInfo.has(CATEGORIES)){
-                writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
-            }
+
+    if (bookInfo.has(AUTHORS)) {
+        writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));
+    }
+    if (bookInfo.has(CATEGORIES)) {
+        writeBackCategories(ean, bookInfo.getJSONArray(CATEGORIES));
+    }
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -230,4 +231,6 @@ public class BookService extends IntentService {
             values= new ContentValues();
         }
     }
- }
+
+}
+
