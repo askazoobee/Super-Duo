@@ -52,5 +52,7 @@
     <string name="a11y_away_crest">Away: <xliff:g id="away team crest">%1$s</xliff:g></string>
     <string name="a11y_match_day">Match Day: <xliff:g id="match day">%1$s</xliff:g></string>
     <string name="a11y_league">League: <xliff:g id="football league">%1$s</xliff:g></string>
+    <string name="a11y_share">Share score to friends: <xliff:g id="football league">%1$s</xliff:g></string>
+    <string name="a11y_about">About this app: <xliff:g id="football league">%1$s</xliff:g></string>
 
 </resources>

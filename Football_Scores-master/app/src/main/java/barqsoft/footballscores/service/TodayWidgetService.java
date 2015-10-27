@@ -86,6 +86,8 @@ public class TodayWidgetService extends IntentService {
         String away_name = data.getString(INDEX_AWAY_COL);
         int home_score = data.getInt(INDEX_HOME_GOALS_COL);
         int away_score = data.getInt(INDEX_AWAY_GOALS_COL);
+        //score for content descrip...
+        String score = "Score" + home_score + "-" + away_score;
         data.close();
 
 
@@ -97,17 +99,30 @@ public class TodayWidgetService extends IntentService {
         RemoteViews views = new RemoteViews(getPackageName(), layoutId);
 
         views.setTextViewText(R.id.home_name, home_name);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            setRemoteContentDescription(views,R.id.home_name, home_name);
+        }
+
         views.setTextViewText(R.id.away_name, away_name);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            setRemoteContentDescription(views,R.id.away_name, away_name);
+        }
+
         views.setTextViewText(R.id.score, Utilies.getScores(home_score, away_score));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            setRemoteContentDescription(views,R.id.score, score);
+        }
 
         views.setImageViewResource(R.id.home_crest, Utilies.getTeamCrestByTeamName(home_name));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             setRemoteContentDescription(views,R.id.home_crest, home_name);
         }
+
         views.setImageViewResource(R.id.away_crest, Utilies.getTeamCrestByTeamName(away_name));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             setRemoteContentDescription(views,R.id.away_crest, away_name);
         }
+
         Intent launchIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
         views.setOnClickPendingIntent(R.id.score, pendingIntent);
@@ -116,7 +131,6 @@ public class TodayWidgetService extends IntentService {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
-
 
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
